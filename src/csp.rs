@@ -4,6 +4,7 @@ use crate::domain::Domain;
 use crate::variable::Variable;
 use std::collections::HashMap;
 use std::fmt::Debug;
+use std::fmt::Display;
 use std::hash::Hash;
 
 /// A Constraint Satisfaction Problem

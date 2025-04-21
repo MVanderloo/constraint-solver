@@ -1,6 +1,7 @@
 use crate::assignment::Assignment;
 use crate::variable::Variable;
 
+use std::collections::HashSet;
 use std::fmt::{Debug, Display};
 use std::hash::Hash;
 use std::rc::Rc;
