@@ -1,8 +1,10 @@
-use constraint::common;
+use csp_solver::BacktrackingSolver;
+use csp_solver::csp::constraint::common;
 use csp_solver::csp::csp::Csp;
-use csp_solver::csp::{assignment, constraint, domain, variable::Variable};
-use csp_solver::solver::Solver;
-use domain::HashSetDomain;
+use csp_solver::csp::domain::HashSetDomain;
+use csp_solver::csp::variable::Variable;
+use csp_solver::solver::heuristics;
+use csp_solver::solver::utils;
 use std::time::Instant;
 
 fn main() {
@@ -63,10 +65,10 @@ fn main() {
     // Print the CSP
     println!("{}", australia);
 
-    // Solve using different strategies
+    // Solve using different strategies for finding a single solution
     println!("\nSolving with simple backtracking:");
     let start = Instant::now();
-    let solution1 = Solver::backtrack_search(&australia);
+    let solution1 = BacktrackingSolver::backtrack_search(&australia);
     let duration = start.elapsed();
     match &solution1 {
         Some(assignment) => println!("Solution found: {}", assignment),
@@ -76,7 +78,7 @@ fn main() {
 
     println!("\nSolving with MRV heuristic:");
     let start = Instant::now();
-    let solution2 = Solver::mrv_search(&australia);
+    let solution2 = BacktrackingSolver::mrv_search(&australia);
     let duration = start.elapsed();
     match &solution2 {
         Some(assignment) => println!("Solution found: {}", assignment),
@@ -86,7 +88,7 @@ fn main() {
 
     println!("\nSolving with LCV heuristic:");
     let start = Instant::now();
-    let solution3 = Solver::lcv_search(&australia);
+    let solution3 = BacktrackingSolver::lcv_search(&australia);
     let duration = start.elapsed();
     match &solution3 {
         Some(assignment) => println!("Solution found: {}", assignment),
@@ -96,7 +98,7 @@ fn main() {
 
     println!("\nSolving with combined MRV and LCV heuristics:");
     let start = Instant::now();
-    let solution4 = Solver::mrv_lcv_search(&australia);
+    let solution4 = BacktrackingSolver::mrv_lcv_search(&australia);
     let duration = start.elapsed();
     match &solution4 {
         Some(assignment) => println!("Solution found: {}", assignment),
@@ -107,7 +109,7 @@ fn main() {
     // Example of using a custom variable selection strategy
     println!("\nSolving with custom selection strategy (selecting most connected variable):");
     let start = Instant::now();
-    let custom_selection = |assignment: &assignment::Assignment<String>,
+    let custom_selection = |assignment: &csp_solver::csp::Assignment<String>,
                             csp: &Csp<String, HashSetDomain<String>>| {
         csp.get_variables()
             .into_iter()
@@ -115,11 +117,39 @@ fn main() {
             .max_by_key(|var| csp.get_constraints_for_variable(var).len())
     };
 
-    let solution5 = Solver::solve(&australia, custom_selection, Solver::domain_order);
+    let solution5 =
+        BacktrackingSolver::find_solution(&australia, custom_selection, utils::domain_order);
     let duration = start.elapsed();
     match &solution5 {
         Some(assignment) => println!("Solution found: {}", assignment),
         None => println!("No solution found"),
+    }
+    println!("Time taken: {:?}", duration);
+
+    // Finding all solutions
+    println!("\nFinding all solutions with backtracking:");
+    let start = Instant::now();
+    let all_solutions = BacktrackingSolver::find_all_backtracking(&australia);
+    let duration = start.elapsed();
+    println!("Found {} solutions", all_solutions.len());
+    for (i, solution) in all_solutions.iter().enumerate() {
+        println!("Solution {}: {}", i + 1, solution);
+    }
+    println!("Time taken: {:?}", duration);
+
+    // Finding limited solutions
+    println!("\nFinding first 3 solutions with MRV+LCV:");
+    let start = Instant::now();
+    let limited_solutions = BacktrackingSolver::find_limited_solutions(
+        &australia,
+        heuristics::minimum_remaining_values,
+        heuristics::least_constraining_value,
+        3,
+    );
+    let duration = start.elapsed();
+    println!("Found {} solutions (limited to 3)", limited_solutions.len());
+    for (i, solution) in limited_solutions.iter().enumerate() {
+        println!("Solution {}: {}", i + 1, solution);
     }
     println!("Time taken: {:?}", duration);
 }
