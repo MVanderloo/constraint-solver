@@ -1,5 +1,5 @@
-use crate::constraint::Constraint;
-use crate::variable::Variable;
+use crate::csp::constraint::Constraint;
+use crate::csp::variable::Variable;
 use std::collections::HashMap;
 use std::fmt::Debug;
 use std::fmt::Display;

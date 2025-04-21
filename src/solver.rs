@@ -1,7 +1,7 @@
-use crate::assignment::Assignment;
-use crate::csp::Csp;
-use crate::domain::Domain;
-use crate::variable::Variable;
+use crate::csp::assignment::Assignment;
+use crate::csp::csp::Csp;
+use crate::csp::domain::Domain;
+use crate::csp::variable::Variable;
 use std::fmt::{Debug, Display};
 use std::hash::Hash;
 

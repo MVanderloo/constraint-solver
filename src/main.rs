@@ -1,16 +1,9 @@
-mod assignment;
-mod constraint;
-mod csp;
-mod domain;
-mod solver;
-mod variable;
-
 use constraint::common;
-use csp::Csp;
+use csp_solver::csp::csp::Csp;
+use csp_solver::csp::{assignment, constraint, domain, variable::Variable};
+use csp_solver::solver::Solver;
 use domain::HashSetDomain;
-use solver::Solver;
 use std::time::Instant;
-use variable::Variable;
 
 fn main() {
     // Create a CSP for the Australian map coloring problem

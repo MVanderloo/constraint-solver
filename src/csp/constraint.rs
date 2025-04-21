@@ -1,5 +1,5 @@
-use crate::assignment::Assignment;
-use crate::variable::Variable;
+use crate::csp::assignment::Assignment;
+use crate::csp::variable::Variable;
 
 use std::collections::HashSet;
 use std::fmt::{Debug, Display};
