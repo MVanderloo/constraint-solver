@@ -2,6 +2,7 @@ mod assignment;
 mod constraint;
 mod csp;
 mod domain;
+mod solver;
 mod variable;
 
 use constraint::common;
@@ -11,8 +12,6 @@ use solver::Solver;
 use variable::Variable;
 
 fn main() {
-    let _ = variable::Variable::<i32>::new("x");
-
     // Create a CSP for the Australian map coloring problem
     let mut australia = Csp::<String, HashSetDomain<String>>::new();
 
@@ -39,8 +38,6 @@ fn main() {
     australia.add_variable(t.clone(), domain.clone()).unwrap();
 
     // Define the adjacency constraints (regions that share a border)
-    let is_different = |a: &String, b: &String| a != b;
-
     australia
         .add_constraint(common::diff("WA-NT", wa.clone(), nt.clone()))
         .unwrap();
@@ -68,8 +65,6 @@ fn main() {
     australia
         .add_constraint(common::diff("NSW-V", nsw.clone(), v.clone()))
         .unwrap();
-
-    // Tasmania is an island, no adjacency constraints needed for it
 
     // Print the CSP
     println!("{}", australia);
