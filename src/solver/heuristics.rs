@@ -2,7 +2,6 @@ use crate::csp::{Assignment, Domain, Variable, csp::Csp};
 use std::fmt::{Debug, Display};
 use std::hash::Hash;
 
-/// Helper function: MRV variable selection
 pub fn minimum_remaining_values<T, D>(
     assignment: &Assignment<T>,
     csp: &Csp<T, D>,
@@ -16,15 +15,23 @@ where
         .filter(|var| !assignment.is_assigned(var))
         .min_by_key(|var| {
             if let Some(domain) = csp.get_domain(var) {
-                domain
+                // count valid values
+                let valid_count = domain
                     .values()
                     .into_iter()
                     .filter(|val| {
-                        let mut test_assignment = assignment.clone();
-                        test_assignment.assign(var.clone(), val.clone());
-                        csp.is_consistent(&test_assignment)
+                        let all_consistent =
+                            csp.get_constraints_for_variable(var)
+                                .iter()
+                                .all(|constraint| {
+                                    let mut temp_assignment = assignment.clone();
+                                    temp_assignment.assign(var.clone(), val.clone());
+                                    constraint.is_satisfied(&temp_assignment)
+                                });
+                        all_consistent
                     })
-                    .count()
+                    .count();
+                valid_count
             } else {
                 usize::MAX
             }
