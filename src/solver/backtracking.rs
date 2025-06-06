@@ -1,6 +1,6 @@
 use super::heuristics::{least_constraining_value, minimum_remaining_values};
 use super::utils::{domain_order, first_unassigned};
-use crate::csp::{csp::Csp, Assignment, Domain, Variable};
+use crate::csp::{Assignment, Domain, Variable, csp::Csp};
 use std::fmt::{Debug, Display};
 use std::hash::Hash;
 
